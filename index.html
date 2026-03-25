@@ -6576,9 +6576,9 @@ initApp();checkInviteLink();
       <div style="font-size:.68rem;color:var(--txd);margin-bottom:3px;letter-spacing:.06em;">USERNAME</div>
       <div style="display:flex;gap:6px;margin-bottom:10px;">
         <input id="admin-search-name" placeholder="e.g. KingSlayer99"
-          style="flex:1;min-width:0;padding:13px 14px;font-size:1rem;border:1.5px solid #2a7ab5;background:#0d1a2e;color:#e2f4ff;letter-spacing:.04em;outline:none;font-family:'Playfair Display',serif;-webkit-user-select:text;user-select:text;"
+          style="flex:1;min-width:0;width:0;padding:13px 14px;font-size:1rem;border:1.5px solid #2a7ab5;background:#0d1a2e;color:#e2f4ff;letter-spacing:.04em;outline:none;font-family:'Playfair Display',serif;user-select:text;-webkit-user-select:text;"
           onkeydown="if(event.key==='Enter')adminSearchPlayer()" />
-        <button class="btn" onclick="adminSearchPlayer()" style="padding:13px 16px;border-color:#2a7ab5;color:#7dc4f0;font-size:.95rem;white-space:nowrap;width:auto;flex-shrink:0;margin:0;">🔍 Search</button>
+        <button onclick="adminSearchPlayer()" style="flex-shrink:0;padding:13px 16px;border:1.5px solid #2a7ab5;background:transparent;color:#7dc4f0;font-family:'Playfair Display',serif;font-size:.95rem;white-space:nowrap;cursor:pointer;">🔍 Search</button>
       </div>
       <div id="admin-search-result"></div>
     </div>
@@ -8388,8 +8388,8 @@ function frRenderFind(){
     <div style="padding:0 0 10px;">
       <div style="font-size:.72rem;color:var(--txd);margin-bottom:5px;">Search by username</div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <input id="fr-search-input" placeholder="Enter username" style="flex:1;min-width:0;padding:11px 13px;font-size:.92rem;border:1.5px solid var(--gdm);background:var(--sf2);color:var(--gold);outline:none;font-family:'Playfair Display',serif;-webkit-user-select:text;user-select:text;" onkeydown="if(event.key==='Enter')frSearch()" />
-        <button class="btn primary" onclick="frSearch()" style="padding:11px 16px;margin:0;white-space:nowrap;flex-shrink:0;width:auto;">Search</button>
+        <input id="fr-search-input" placeholder="Enter username" style="flex:1;min-width:0;width:0;padding:11px 13px;font-size:.92rem;border:1.5px solid var(--gdm);background:var(--sf2);color:var(--gold);outline:none;font-family:'Playfair Display',serif;user-select:text;-webkit-user-select:text;" onkeydown="if(event.key==='Enter')frSearch()" />
+        <button onclick="frSearch()" style="flex-shrink:0;padding:11px 16px;border:1.5px solid var(--gold);background:linear-gradient(135deg,#6b4d14,#c8a84b);color:#0b0906;font-family:'Playfair Display',serif;font-size:.85rem;white-space:nowrap;cursor:pointer;font-weight:700;">Search</button>
       </div>
       <div id="fr-search-results" style="margin-top:8px;"></div>
     </div>`;
