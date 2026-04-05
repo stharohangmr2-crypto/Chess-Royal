@@ -337,6 +337,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* GAME */
 #game-screen{padding:0;align-items:stretch;}
 .gwrap{width:100%;max-width:480px;height:100vh;height:100dvh;display:flex;flex-direction:column;margin:0 auto;}
+@media(min-width:700px){#game-screen{align-items:stretch;}.gwrap{max-width:100%;flex-direction:row;flex-wrap:wrap;}.gtop{width:100%;order:0;flex-shrink:0;}div.pbar.top{width:100%;order:1;flex-shrink:0;}#clk-opp-bar{width:100%;order:2;flex-shrink:0;}.board-area{order:3;flex:1 1 100%;min-height:0;}#clk-me-bar{width:100%;order:4;flex-shrink:0;}.sbar{width:100%;order:5;flex-shrink:0;}div.pbar.bot{width:100%;order:6;flex-shrink:0;}}
 .gtop{display:flex;align-items:center;justify-content:space-between;padding:5px 11px;background:var(--sf);border-bottom:1px solid var(--brd);flex-shrink:0;}
 .gtl{display:flex;align-items:center;gap:7px;}
 .gbadge{font-size:.6rem;letter-spacing:.09em;color:var(--txd);text-transform:uppercase;background:var(--sf2);border:1px solid var(--brd);padding:2px 6px;}
@@ -449,7 +450,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .tdot{width:7px;height:7px;border-radius:50%;background:var(--brd);flex-shrink:0;transition:all .28s;}
 .tdot.on{background:var(--gold);box-shadow:0 0 8px var(--gold);}
 .board-area{flex:1;display:flex;align-items:center;justify-content:center;padding:7px;overflow:hidden;position:relative;}
-.bframe{position:relative;width:min(calc(100vw - 14px),calc(100vh - 180px));aspect-ratio:1;border:2px solid var(--gdm);box-shadow:0 0 0 1px var(--brd),0 0 50px rgba(0,0,0,.9);}
+.bframe{position:relative;width:min(calc(100vw - 14px),calc(100vh - 180px));aspect-ratio:1;border:2px solid var(--gdm);box-shadow:0 0 0 1px var(--brd),0 0 50px rgba(0,0,0,.9);}@media(min-width:700px){.bframe{width:auto;height:min(calc(100vh - 260px),70vw);max-height:70vmin;}}
 #board{width:100%;height:100%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);}
 .sq{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .sq.lt{background:var(--ls);}.sq.dk{background:var(--ds);}
@@ -458,6 +459,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .sq.inchk{background:var(--chk)!important;}
 .sq.hf{background:var(--hf)!important;animation:hpulse 1.1s ease-in-out infinite;}
 .sq.ht{background:var(--ht)!important;animation:hpulse 1.1s ease-in-out infinite .18s;}
+.sq.premove-from{background:rgba(120,60,200,.55)!important;}
+.sq.premove-to{background:rgba(120,60,200,.55)!important;}
 @keyframes hpulse{0%,100%{opacity:.8}50%{opacity:1;filter:brightness(1.18)}}
 .sq.dot::after{content:'';position:absolute;width:30%;height:30%;border-radius:50%;background:var(--dot);pointer-events:none;z-index:2;}
 .sq.cap::after{content:'';position:absolute;inset:0;border-radius:50%;border:4px solid var(--dot);pointer-events:none;z-index:2;}
@@ -904,6 +907,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .game-menu-btn:last-child{margin-bottom:0;}
 .game-menu-btn:hover{border-color:var(--gold);color:var(--gold);}
 .game-menu-btn.resign{border-color:#5c1a1a;color:#e05555;}
+.game-menu-btn.draw{border-color:#2a5a2a;color:#5ddb7a;}
+.draw-offer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:190;display:none;align-items:center;justify-content:center;padding:20px;}
+.draw-offer-overlay.on{display:flex;}
+.draw-offer-modal{background:var(--sf);border:1.5px solid #2a5a2a;padding:24px 20px;width:100%;max-width:290px;text-align:center;animation:fu .25s ease both;}
 .game-menu-btn.resign:hover{border-color:var(--red);color:#ff8888;background:#1a0808;}
 .game-menu-btn.cancel{border-color:var(--brd);color:var(--txd);font-size:.82rem;}
 /* ── MUSIC TOGGLE ── */
@@ -933,7 +940,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="wd"></div><div class="wd"></div><div class="wd"></div>
       <span>Signing in…</span>
     </div>
-    <div class="login-note">Sign in to save your progress, rank up, and compete on the global leaderboard.</div>
+    <div style="width:100%;max-width:280px;margin-top:10px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="flex:1;height:1px;background:var(--brd);"></div>
+        <span style="font-size:.68rem;color:var(--txd);letter-spacing:.1em;">OR</span>
+        <div style="flex:1;height:1px;background:var(--brd);"></div>
+      </div>
+      <button id="guest-sign-btn" onclick="signInAsGuest()" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 20px;background:transparent;border:1.5px solid var(--brd);color:var(--txd);font-family:'Crimson Text',serif;font-size:.95rem;cursor:pointer;letter-spacing:.04em;transition:all .2s;">
+        👤 &nbsp;Continue as Guest
+      </button>
+    </div>
+    <div class="login-note">Sign in with Google to save progress, earn ELO, and play ranked.<br><span style="color:#7a5a2a;">Guests can play AI &amp; local games only.</span></div>
   </div>
 </div>
 
@@ -1466,12 +1483,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div class="screen" id="qp-lobby-screen">
   <button class="back-btn" onclick="cancelQPFriend()">← Back</button>
   <div class="stitle" style="color:#c084fc;">Challenge a Friend</div>
-  <div class="ssub">Share your room code to race</div>
-  <div class="qp-lobby-tabs">
-    <div class="qp-ltab on" id="qp-tab-host" onclick="qpShowHost()">Create Room</div>
-    <div class="qp-ltab" id="qp-tab-join" onclick="qpShowJoin()">Join Room</div>
+  <div class="ssub">Create or join a room to race on piece arrangement</div>
+
+  <!-- ── LANDING: Choose Create or Join ── -->
+  <div id="qp-choose" style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+    <button class="btn primary" onclick="qpShowHost()" style="padding:18px;font-size:1.05rem;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <span style="font-size:1.4rem;">🏠</span>
+      <div style="text-align:left;"><div style="font-weight:700;">Create Room</div><div style="font-size:.72rem;opacity:.75;font-weight:400;letter-spacing:.02em;">Host — share your code to race</div></div>
+    </button>
+    <button class="btn" onclick="qpShowJoin()" style="padding:18px;font-size:1.05rem;letter-spacing:.06em;border-color:#2a7ab5;color:#7dd4fc;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <span style="font-size:1.4rem;">🔗</span>
+      <div style="text-align:left;"><div style="font-weight:700;">Join Room</div><div style="font-size:.72rem;opacity:.75;font-weight:400;letter-spacing:.02em;">Enter a friend's room code</div></div>
+    </button>
   </div>
-  <div id="qp-fhost" style="width:100%;max-width:300px;text-align:center;">
+
+  <!-- ── CREATE ROOM VIEW ── -->
+  <div id="qp-fhost" style="display:none;width:100%;max-width:300px;text-align:center;">
     <div class="rcbox">
       <div class="rclbl">Your Room Code</div>
       <div class="rccode" id="qp-room-code">——</div>
@@ -1479,12 +1506,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="rcnote">Share this code with a friend to race!</div>
     </div>
     <div class="wanim"><div class="wd"></div><div class="wd"></div><div class="wd"></div><span id="qp-fwait">Waiting for opponent…</span></div>
+    <button class="btn" onclick="qpBackToChoose()" style="width:100%;padding:10px;margin-top:8px;">← Back</button>
   </div>
+
+  <!-- ── JOIN ROOM VIEW ── -->
   <div id="qp-fjoin" style="display:none;width:100%;max-width:300px;text-align:center;">
     <div style="font-size:.8rem;color:var(--txd);margin-bottom:9px;">Enter Room Code</div>
-    <input class="jin" id="qp-join-in" maxlength="6" placeholder="XXXXXX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
-    <button class="btn primary" style="margin-top:9px;" onclick="qpJoinRoom()">Join Room</button>
-    <button class="btn" style="margin-top:4px;" onclick="qpShowHost()">← Create My Room</button>
+    <input class="jin" id="qp-join-in" maxlength="6" placeholder="XXXXXX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')" onkeydown="if(event.key==='Enter')qpJoinRoom()">
+    <button class="btn primary" style="margin-top:9px;width:100%;padding:12px;" onclick="qpJoinRoom()">Join Room →</button>
+    <div id="qp-join-status" style="font-size:.75rem;margin-top:6px;min-height:16px;color:var(--gold);"></div>
+    <button class="btn" style="margin-top:6px;width:100%;padding:10px;" onclick="qpBackToChoose()">← Back</button>
   </div>
 </div>
 
@@ -1572,6 +1603,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 
+<!-- DRAW OFFER OVERLAY -->
+<div class="draw-offer-overlay" id="draw-offer-overlay">
+  <div class="draw-offer-modal">
+    <div style="font-size:2rem;margin-bottom:8px;">🤝</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#5ddb7a;margin-bottom:4px;">Draw Offered</div>
+    <div style="font-size:.8rem;color:var(--txd);margin-bottom:16px;line-height:1.45;" id="draw-offer-sub">Your opponent offers a draw.</div>
+    <button class="btn" style="background:#1a3a1a;border-color:#2a6a2a;color:#5ddb7a;width:100%;max-width:260px;margin:0 auto 8px;display:block;" onclick="respondDraw(true)">✅ Accept Draw</button>
+    <button class="btn" style="width:100%;max-width:260px;margin:0 auto;display:block;" onclick="respondDraw(false)">❌ Decline</button>
+  </div>
+</div>
+
 <!-- PUZZLE MENU -->
 
 <!-- GAME -->
@@ -1640,6 +1682,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div class="game-menu-overlay" id="game-menu-overlay" onclick="closeGameMenu()">
   <div class="game-menu-box" onclick="event.stopPropagation()">
     <div class="game-menu-title">Game Options</div>
+    <button class="game-menu-btn draw" id="gm-draw-btn" onclick="closeGameMenu();offerDraw()" style="display:none;">🤝 Offer Draw</button>
     <button class="game-menu-btn resign" id="gm-resign-btn" onclick="closeGameMenu();openSurrenderModal('game')">🏳 Resign / Surrender</button>
     <button class="game-menu-btn" onclick="closeGameMenu();confirmMenu()">🏠 Return to Menu</button>
     <button class="game-menu-btn cancel" onclick="closeGameMenu()">✕ Keep Playing</button>
@@ -2296,6 +2339,7 @@ function refreshRankedPill(){
 }
 
 function tryPlayRanked(){
+  if(isGuest()){guestBlock('Ranked Match');return;}
   if(!isFeatureEnabled('ranked_enabled')){showToast('Ranked mode is currently unavailable','var(--red)');return;}
   isRankedMode=true;
   const s=getSave();
@@ -2356,16 +2400,19 @@ function tryRankedConnect(myPeer,s,lobbyId,asHost){
   if(asHost){becomeRankedLobby(myPeer,s,lobbyId);return;}
   const c=myPeer.connect(lobbyId,{metadata:{name:s.name,elo:s.ranked.elo,tier:getTier(s.ranked.elo).name,avatar:s.equippedAvatar}});
   let opened=false;
+  // Attach handleOnlineData immediately so moves during the game are received
+  c.on('data',d=>{
+    if(d.type==='ranked_matched'){
+      onlineOppName=d.oppName;oppElo=d.oppElo||1200;
+      showRankedMMFound(d.oppName,d.oppAvatar||'♞',d.oppTier||'Pawn',oppElo);
+      setTimeout(()=>startRankedOnlineGame(),2800);
+    } else {
+      handleOnlineData(d);
+    }
+  });
   c.on('open',()=>{
     opened=true;onlineRole='guest';conn=c;
-    c.on('data',d=>{
-      if(d.type==='ranked_matched'){
-        onlineOppName=d.oppName;oppElo=d.oppElo||1200;
-        showRankedMMFound(d.oppName,d.oppAvatar||'♞',d.oppTier||'Pawn',oppElo);
-        conn.on('data',handleOnlineData);conn.on('close',handleDisconnect);
-        setTimeout(()=>startRankedOnlineGame(),2800);
-      }
-    });
+    c.on('close',handleDisconnect);
   });
   setTimeout(()=>{if(!opened&&mmSec<35)becomeRankedLobby(myPeer,s,lobbyId);},3500);
   c.on('error',()=>{if(mmSec<35)becomeRankedLobby(myPeer,s,lobbyId);});
@@ -2380,10 +2427,12 @@ function becomeRankedLobby(myPeer,s,lobbyId){
     onlineRole='host';onlineOppName=c.metadata?.name||'Opponent';
     oppElo=c.metadata?.elo||1200;conn=c;
     const oppTier=c.metadata?.tier||'Pawn';const oppAv=c.metadata?.avatar||'♞';
+    // Attach data listener before open fires
+    c.on('data',handleOnlineData);
+    c.on('close',handleDisconnect);
     c.on('open',()=>{
       c.send({type:'ranked_matched',oppName:s.name,oppElo:s.ranked.elo,oppTier:getTier(s.ranked.elo).name,oppAvatar:s.equippedAvatar});
       showRankedMMFound(onlineOppName,oppAv,oppTier,oppElo);
-      conn.on('data',handleOnlineData);conn.on('close',handleDisconnect);
       setTimeout(()=>startRankedOnlineGame(),2800);
     });
   });
@@ -2411,7 +2460,7 @@ function showRankedMMFound(name,avatar,tierName,eloVal){
 function startRankedOnlineGame(){
   mode='online';isRankedMode=true;
   curDiff=null;curLevel=null;
-  board=initBoard();turn='w';selSq=null;valMoves=[];
+  board=initBoard();turn='w';selSq=null;valMoves=[];preMoveFrom=null;preMoveTo=null;preMovePromo=null;
   epSq=null;castling={wK:true,wQ:true,bK:true,bQ:true};
   lastMove=null;capW=[];capB=[];over=false;pendingPromo=null;hintMove=null;
   clearTimeout(hintTimer);clearHints();closeAllModals();
@@ -2426,10 +2475,20 @@ function startRankedOnlineGame(){
   document.getElementById('name-bot').textContent=(imWhite?s.name:onlineOppName)+' · '+s.ranked.elo+' ELO';
   document.getElementById('av-top').className=imWhite?'pav obl':'pav owh';
   document.getElementById('av-bot').className=imWhite?'pav owh':'pav obl';
-  document.getElementById('hint-btn').style.display='none';
+  // Allow hints for admin, hide for normal players in ranked
+  const hintBtn=document.getElementById('hint-btn');
+  if(hintBtn)hintBtn.style.display=(isAdmin()||window._trialAdmin)?'flex':'none';
   document.getElementById('emote-btn').style.display='flex';
   document.getElementById('chat-btn').style.display='flex';
   resetChat();updateGameHintDisplay();showScreen('game-screen');renderBoard();updateUI();updateSurrenderBtn();
+  // Init clock for ranked (default 5+0)
+  const tc=selectedRankedTC||'5+0';
+  initClock(tc);
+  startClockInterval();
+  // Host tells guest what TC to use
+  if(onlineRole==='host'&&conn&&conn.open){
+    conn.send({type:'tc_info',tc});
+  }
   showToast(imWhite?'⚔️ Ranked · You play White':'⚔️ Ranked · You play Black','#7dc4f0');
 }
 
@@ -2583,8 +2642,11 @@ function initApp(){
   applyTheme(getSave().equippedTheme);
   applyPieceSet(getSave().equippedPieces);
   applyClockSkin(getSave().equippedClockSkin||'clk_classic');
-  // Show login screen immediately; onAuthStateChanged will redirect
-  showScreen('login-screen');
+  // If already in a guest session, go straight to game; otherwise show login
+  if(!getSave()._guest){
+    showScreen('login-screen');
+  }
+  // onAuthStateChanged will redirect properly once Firebase resolves
 }
 
 function syncProfileToFirebase(){
@@ -2611,8 +2673,12 @@ function syncProfileToFirebase(){
     activeBadge:s.activeBadge||null,
     seasonBadges:s.seasonBadges||[],
     allBadges:allBadges,
+    coins:s.coins||0,
+    diamonds:s.diamonds||0,
     updatedAt:Date.now()
   }).catch(()=>{});
+  // Keep global leaderboard in sync
+  pushToGlobalLB(s.name,avatarEmoji,s.onlineStats.wins||0);
   // Also update ranked season node with badge info
   const key=uid;
   const rankRef=fbDb.ref('ranked_season_'+RANKED_SEASON+'/'+key);
@@ -2746,7 +2812,44 @@ function signOut(){
       document.getElementById('google-sign-btn').style.display='flex';
       document.getElementById('login-loading').style.display='none';
     });
+  } else {
+    // Guest sign out
+    fbUser=null;
+    updateSave(s=>{s._guest=false;s.name='';});
+    showScreen('login-screen');
+    document.getElementById('google-sign-btn').style.display='flex';
   }
+}
+
+// ═══════════════════════ GUEST AUTH ═══════════════════════
+function isGuest(){
+  return !fbUser && !!getSave()._guest;
+}
+
+function signInAsGuest(){
+  const btn=document.getElementById('guest-sign-btn');
+  btn.disabled=true;
+  btn.textContent='Entering…';
+  // Give guest a local-only save flagged as guest
+  updateSave(s=>{
+    s._guest=true;
+    if(!s.name){
+      // Assign a random guest name
+      s.name='Guest_'+Math.random().toString(36).slice(2,7).toUpperCase();
+    }
+  });
+  setTimeout(()=>{
+    bootIntoGame();
+    btn.disabled=false;
+    btn.innerHTML='👤 &nbsp;Continue as Guest';
+  }, 300);
+}
+
+// Show a "sign in required" overlay for guests trying restricted modes
+function guestBlock(featureName){
+  showToast('🔒 '+featureName+' requires a Google account — sign in to unlock!','#c9a84c');
+  // Bounce them back to menu after short delay
+  setTimeout(()=>showScreen('menu-screen'),1800);
 }
 function closeWelcome(){document.getElementById('welcome-overlay').classList.remove('on');refreshMenuCoins();}
 
@@ -2802,6 +2905,21 @@ function refreshMenuCoins(){
   document.getElementById('menu-coins').textContent=s.coins;
   const de=document.getElementById('menu-diamonds');
   if(de)de.textContent=s.diamonds||0;
+  // Guest badge
+  let guestBadge=document.getElementById('guest-mode-badge');
+  if(isGuest()){
+    if(!guestBadge){
+      guestBadge=document.createElement('div');
+      guestBadge.id='guest-mode-badge';
+      guestBadge.style.cssText='font-size:.62rem;color:#7a6a4a;letter-spacing:.08em;text-align:center;padding:3px 10px;background:#1a1408;border:1px solid #3a2e10;cursor:pointer;width:100%;max-width:320px;box-sizing:border-box;flex-shrink:0;';
+      guestBadge.innerHTML='👤 GUEST MODE &nbsp;·&nbsp; <span style="color:var(--gold);text-decoration:underline;">Tap to sign in & save progress</span>';
+      guestBadge.onclick=()=>showScreen('login-screen');
+      const mtop=document.querySelector('#menu-screen .mtop');
+      if(mtop)mtop.insertAdjacentElement('afterend',guestBadge);
+    }
+  } else {
+    if(guestBadge)guestBadge.remove();
+  }
 }
 function switchTab(id,el){
   document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
@@ -3096,10 +3214,16 @@ function buildAvatarsPanel(){
 
 function buildEmotesPanel(){
   const s=getSave();
-  const panel=document.getElementById('panel-emotes');panel.innerHTML='';
-
-  // Reload limited emotes from Firebase first, then render
-  loadLimitedEmoteExpiry(()=>_renderEmotePanel(s,panel));
+  const panel=document.getElementById('panel-emotes');
+  const scontent=panel.closest('.scontent');
+  const savedScroll=scontent?scontent.scrollTop:0;
+  const doRender=()=>{
+    panel.innerHTML='';
+    _renderEmotePanel(s,panel);
+    if(scontent)requestAnimationFrame(()=>{ scontent.scrollTop=savedScroll; });
+  };
+  if(window._limitedEmotesLoaded){doRender();}
+  else{loadLimitedEmoteExpiry(()=>{window._limitedEmotesLoaded=true;doRender();});}
 }
 function _renderEmotePanel(s,panel){
   panel.innerHTML='';
@@ -3715,7 +3839,7 @@ function joinRoom(){
   const code=document.getElementById('join-in').value.trim().toUpperCase();
   if(code.length<4){showToast('Enter a valid room code','var(--red)');return;}
   const statusEl=document.getElementById('fj-status');
-  const joinBtn=document.querySelector('#fjoin .btn.primary');
+  const joinBtn=document.querySelector('#f-join-view .btn.primary');
   statusEl.textContent='Connecting…';
   statusEl.style.color='var(--gold)';
   if(joinBtn)joinBtn.disabled=true;
@@ -3794,41 +3918,42 @@ let _lobbyTC='5+0'; // time control chosen in lobby
 function setupConn(role,name,oppPieceSet){
   onlineRole=role;onlineOppName=name;
   onlineOppPieceSet=oppPieceSet||'classic';
+
+  // Attach data listener immediately (before open) so no messages are missed
   conn.on('data',d=>{
     if(d.type==='piece_sync'){
       onlineOppPieceSet=d.pieceSet||'classic';
       if(d.name)onlineOppName=d.name;
-      // Guest: update lobby with host name/info received
-      if(role==='guest')lobbyGuestUpdate(d);
+      if(d.avatar)onlineOppAvatar=d.avatar||'♟';
+      if(role==='guest'){
+        lobbyGuestUpdate(d);
+      } else {
+        // Host received guest's piece_sync — update guest slot live
+        lobbyGuestJoined(d.name||'Friend', d.avatar||'♟');
+      }
     }
     else if(d.type==='lobby_start'){
-      // Host says game is starting
-      _lobbyTC=d.tc||'5+0';
+      _lobbyTC=d.tc||selectedTC||'5+0';
       selectedTC=_lobbyTC;
       startOnlineGame();
     }
     else if(d.type==='lobby_tc'){
-      // Host changed time control
       _lobbyTC=d.tc;
       selectedTC=d.tc;
       lobbyUpdateTCLabel(d.tc);
     }
     else handleOnlineData(d);
   });
-  conn.on('close',()=>{
-    if(mode!=='online')handleDisconnect();
-    else handleDisconnect();
-  });
-  conn.on('error',handleDisconnect);
+  conn.on('close',()=>handleDisconnect());
+  conn.on('error',()=>handleDisconnect());
 
-  // Send our info
+  // Send our info — do it on open if not yet open, or immediately
   const s=getSave();
   const av=AVATARS.find(a=>a.id===s.equippedAvatar)?.e||'♟';
   const payload={type:'piece_sync',pieceSet:s.equippedPieces||'classic',name:s.name||'Friend',avatar:av};
-  const send=()=>conn.send(payload);
-  if(conn&&conn.open)send(); else conn.on('open',send);
+  if(conn.open) conn.send(payload); else conn.on('open',()=>conn.send(payload));
 
-  // Show the lobby instead of starting game immediately
+  // Show the lobby
   showLobby(role,name,oppPieceSet);
 }
 
@@ -4142,12 +4267,41 @@ function handleOnlineData(data){
     turn=opp(turn);selSq=null;valMoves=[];
     animateMove(m.from[0],m.from[1],m.to[0],m.to[1],sym,colorClass,()=>{
       renderBoard();updateUI();checkOver();
+      if(!over&&preMoveFrom&&preMoveTo){
+        const pfr=preMoveFrom,pto=preMoveTo;
+        preMoveFrom=null;preMoveTo=null;preMovePromo=null;
+        const legal=legalMoves(board,pfr[0],pfr[1],epSq,castling);
+        const match=legal.filter(mv=>mv.to[0]===pto[0]&&mv.to[1]===pto[1]);
+        if(match.length&&myTurn()){
+          const pros=match.filter(mv=>mv.special&&mv.special.startsWith('p:'));
+          if(pros.length){showPromo(pros);}else{doMove(match[0]);}
+        }else{renderBoard();}
+      }
     });
     return;
   }else if(data.type==='emote'){
     showEmoteBubble(data.txt,true);
   }else if(data.type==='chat'){
     addChatMsg({text:data.text,author:data.author||'Opponent',me:false});
+  }else if(data.type==='draw_offer'){
+    document.getElementById('draw-offer-sub').textContent='Your opponent offers a draw. Accept?';
+    document.getElementById('draw-offer-overlay').classList.add('on');
+  }else if(data.type==='draw_accepted'){
+    over=true;
+    if(isRankedMode){
+      const{delta,newElo,oldElo}=applyRankedResult('draw');
+      injectEloDelta('elo-win-inject','win-earned','draw',delta,oldElo,newElo);
+      showWinModal('Draw Agreed 🤝','Ranked draw',0,getTier(newElo).icon+' '+getTier(newElo).name+' · '+newElo+' ELO',getSave().coins);
+    }else{
+      const half=Math.floor(lastBet/2);
+      updateSave(sv=>{sv.coins+=half;});
+      showWinModal('Draw Agreed 🤝','Online draw','Bets returned ½','Good game!',getSave().coins);
+    }
+    document.getElementById('next-btn').style.display='none';
+    document.getElementById('win-lvl-btn').style.display='none';
+    document.getElementById('win-menu-btn').style.display='block';
+  }else if(data.type==='draw_declined'){
+    showToast('Draw declined — keep playing!','var(--txd)');
   }else if(data.type==='opponent_surrendered'){
     over=true;
     if(isRankedMode){
@@ -4177,6 +4331,7 @@ function handleDisconnect(){
 
 // Matchmaking
 function tryPlayOnline(){
+  if(isGuest()){guestBlock('Online Play');return;}
   const s=getSave();
   const minC=window._adminMinCoins!=null?window._adminMinCoins:50;
   if(!isFeatureEnabled('quickplay_enabled')){showToast('Quick Play is currently unavailable','var(--red)');return;}
@@ -4290,11 +4445,11 @@ function tryConnectLobby(myPeer,s,lobbyId,phase){
         onlineOppName=d.oppName;
         onlineOppPieceSet=d.oppPieceSet||'classic';
         oppBet=d.oppBet||lastBet;
-        // Each player wins double their OWN bet if they win
         showMMFound(d.oppName,d.oppAvatar||'♟',lastBet*2,oppBet*2);
-        conn.on('data',d2=>{if(d2.type==='piece_sync'){onlineOppPieceSet=d2.pieceSet||'classic';}else handleOnlineData(d2);});
         conn.on('close',handleDisconnect);
         setTimeout(()=>startOnlineGame(),2800);
+      } else {
+        handleOnlineData(d);
       }
     });
   });
@@ -4386,7 +4541,7 @@ function cancelMM(refund=false){
 }
 function startOnlineGame(){
   mode='online';curDiff=null;curLevel=null;
-  board=initBoard();turn='w';selSq=null;valMoves=[];
+  board=initBoard();turn='w';selSq=null;valMoves=[];preMoveFrom=null;preMoveTo=null;preMovePromo=null;
   epSq=null;castling={wK:true,wQ:true,bK:true,bQ:true};
   lastMove=null;capW=[];capB=[];over=false;pendingPromo=null;hintMove=null;
   clearTimeout(hintTimer);clearHints();closeAllModals();
@@ -4400,12 +4555,22 @@ function startOnlineGame(){
   document.getElementById('name-bot').textContent=(imWhite?myName:onlineOppName)+' · Bet: 💰'+lastBet+(oppBet&&oppBet!==lastBet?' vs 💰'+oppBet:'');
   document.getElementById('av-top').className=imWhite?'pav obl':'pav owh';
   document.getElementById('av-bot').className=imWhite?'pav owh':'pav obl';
-  document.getElementById('hint-btn').style.display='none';
+  // Allow hints for admin, hide for normal players in online
+  const hintBtn=document.getElementById('hint-btn');
+  if(hintBtn)hintBtn.style.display=(isAdmin()||window._trialAdmin)?'flex':'none';
   document.getElementById('emote-btn').style.display='flex';
   document.getElementById('chat-btn').style.display='flex';
   resetChat();
   updateGameHintDisplay();showScreen('game-screen');renderBoard();updateUI();
   updateSurrenderBtn();
+  // Init clock
+  const tc=selectedTC||'5+0';
+  initClock(tc);
+  if(clockEnabled)startClockInterval();
+  // Host tells guest TC
+  if(onlineRole==='host'&&conn&&conn.open){
+    conn.send({type:'tc_info',tc});
+  }
   showToast(imWhite?'You play White ♔':'You play Black ♚','var(--blue)');
 }
 function refreshOnlineScreen(){
@@ -4442,7 +4607,8 @@ function initFirebase(){
     fbAuth.onAuthStateChanged(user=>{
       fbUser=user;
       if(user){
-        // Signed in — check if username is set
+        // Signed in with Google — clear any guest flag
+        updateSave(sv=>{sv._guest=false;});
         const s=getSave();
         if(!s.googleUid)updateSave(sv=>{sv.googleUid=user.uid;sv.googleEmail=user.email;sv.googlePhoto=user.photoURL;});
         if(!s.name||s.name===''){
@@ -4451,8 +4617,12 @@ function initFirebase(){
           bootIntoGame();
         }
       }else{
-        // Not signed in — show login screen
-        showScreen('login-screen');
+        // Not signed in — but check if already in guest session
+        if(getSave()._guest){
+          bootIntoGame();
+        } else {
+          showScreen('login-screen');
+        }
       }
     });
   }catch(e){console.warn('Firebase init failed',e);bootIntoGame();}
@@ -4466,13 +4636,14 @@ function lbSafeKey(name){
 function pushToGlobalLB(name,avatar,wins){
   initFirebase();
   if(!fbDb)return;
-  const key=lbSafeKey(name);
+  // Use uid as key when logged in — prevents name collisions and enables self-matching
+  const key=fbUser?fbUser.uid:lbSafeKey(name);
   const ref=fbDb.ref('leaderboard/'+key);
   ref.once('value').then(snap=>{
     const existing=snap.val();
     // Only update if wins increased
     if(!existing||wins>existing.wins){
-      ref.set({name,avatar,wins,updated:Date.now()});
+      ref.set({name,avatar,wins,uid:key,updated:Date.now()});
     }
   }).catch(()=>{});
 }
@@ -4594,6 +4765,7 @@ function showEmoteBubble(txt,fromOpponent){
 
 // ═══════════════════════ GAME ═══════════════════════
 let board,turn,selSq,valMoves,mode,curDiff,curLevel;
+let preMoveFrom=null,preMoveTo=null,preMovePromo=null;
 let epSq,castling,lastMove,capW,capB,over,pendingPromo,hintMove,hintTimer;
 
 function showScreen(id){
@@ -4604,6 +4776,7 @@ function showScreen(id){
   if(id==='level-screen')buildLevelGrid();
   if(id==='online-screen')refreshOnlineScreen();
   if(id==='friends-screen'){
+    if(isGuest()){guestBlock('Play with Friends');return;}
     // Always show the choose landing when navigating to friends screen
     if(!_urlRoom){
       document.getElementById('f-choose').style.display='flex';
@@ -4614,7 +4787,10 @@ function showScreen(id){
   }
   if(id==='leaderboard-screen')buildLeaderboard();
   if(id==='comments-screen')loadComments();
-  if(id==='qp-lobby-screen'){qpShowHost();}
+  if(id==='qp-lobby-screen'){
+    if(isGuest()){guestBlock('Challenge a Friend');return;}
+    qpBackToChoose();
+  }
   if(id==='admin-screen'){adminLoadTournamentStatus();adminBuildLimitedList();setTimeout(adminLoadDashboard,300);adminLoadToggles();loadAnnouncements();}
   applyTheme(getSave().equippedTheme);
   applyPieceSet(getSave().equippedPieces);
@@ -4660,7 +4836,7 @@ function buildLevelGrid(){
 }
 function startGame(lvl){
   curLevel=lvl||null;
-  board=initBoard();turn='w';selSq=null;valMoves=[];
+  board=initBoard();turn='w';selSq=null;valMoves=[];preMoveFrom=null;preMoveTo=null;preMovePromo=null;
   epSq=null;castling={wK:true,wQ:true,bK:true,bQ:true};
   lastMove=null;capW=[];capB=[];over=false;pendingPromo=null;hintMove=null;
   clearTimeout(hintTimer);clearHints();closeAllModals();
@@ -4710,7 +4886,9 @@ function updateGameHintDisplay(){
 
 // HINT
 function useHint(){
-  if(over||!myTurn()||mode==='online')return;
+  if(over||!myTurn())return;
+  // Block hints in online for normal players; allow for admin
+  if(mode==='online'&&!isAdmin()&&!window._trialAdmin)return;
   const s=getSave();
   if(s.hints<=0){showToast('No hints left! Buy in Shop 🛒','var(--blue)');return;}
   updateSave(sv=>sv.hints--);updateGameHintDisplay();clearHints();
@@ -4772,6 +4950,8 @@ function renderBoard(bid='board'){
     if(lastMove){const[fr,fc]=lastMove.from,[tr2,tc]=lastMove.to;if((r===fr&&c===fc)||(r===tr2&&c===tc))sq.classList.add('lm');}
     if(selSq&&selSq[0]===r&&selSq[1]===c)sq.classList.add('sel');
     if(valMoves.some(m=>m.to[0]===r&&m.to[1]===c))sq.classList.add(b[r][c]&&gc(b[r][c])!==t?'cap':'dot');
+    if(preMoveFrom&&preMoveFrom[0]===r&&preMoveFrom[1]===c)sq.classList.add('premove-from');
+    if(preMoveTo&&preMoveTo[0]===r&&preMoveTo[1]===c)sq.classList.add('premove-to');
     if(ckSq&&ckSq[0]===r&&ckSq[1]===c)sq.classList.add('inchk');
     if(hintMove){if(r===hintMove.from[0]&&c===hintMove.from[1])sq.classList.add('hf');if(r===hintMove.to[0]&&c===hintMove.to[1])sq.classList.add('ht');}
     sq.addEventListener('click',()=>handleClick(r,c));
@@ -4794,7 +4974,19 @@ function myTurn(){
   return true;
 }
 function handleClick(r,c){
-  if(over||!myTurn())return;
+  if(over)return;
+  if(mode==='online'&&!myTurn()){
+    const myCol=onlineRole==='host'?'w':'b';
+    const p=board[r][c];
+    if(preMoveFrom){
+      if(preMoveFrom[0]===r&&preMoveFrom[1]===c){preMoveFrom=null;preMoveTo=null;renderBoard();return;}
+      preMoveTo=[r,c];renderBoard();
+      showToast('Pre-move queued 🟣','rgba(120,60,200,.9)');return;
+    }
+    if(p&&gc(p)===myCol){preMoveFrom=[r,c];preMoveTo=null;renderBoard();return;}
+    return;
+  }
+  if(!myTurn())return;
   if(clockEnabled&&clockWaitingPress){
     showToast('Press your clock first! ⏱','#5ddb7a');return;
   }
@@ -5031,7 +5223,7 @@ function applyUrlParamsAfterLogin(){
   if(_urlQpRoom.length>=4){
     setTimeout(()=>{
       showScreen('qp-lobby-screen');
-      try{document.getElementById('qp-tab-join').click();}catch{}
+      qpShowJoin();
       document.getElementById('qp-join-in').value=_urlQpRoom;
       showToast('QP Room code loaded!','var(--blue)');
     },400);
@@ -5084,6 +5276,34 @@ function confirmSurrender(){
   }
 }
 
+function offerDraw(){
+  if(!conn||!conn.open){showToast('Not connected','var(--red)');return;}
+  if(over)return;
+  conn.send({type:'draw_offer'});
+  showToast('Draw offer sent 🤝','#5ddb7a');
+}
+function respondDraw(accept){
+  document.getElementById('draw-offer-overlay').classList.remove('on');
+  if(accept){
+    if(conn&&conn.open)conn.send({type:'draw_accepted'});
+    over=true;
+    if(isRankedMode){
+      const{delta,newElo,oldElo}=applyRankedResult('draw');
+      injectEloDelta('elo-win-inject','win-earned','draw',delta,oldElo,newElo);
+      showWinModal('Draw Agreed 🤝','Ranked draw',0,getTier(newElo).icon+' '+getTier(newElo).name+' · '+newElo+' ELO',getSave().coins);
+    }else{
+      const half=Math.floor(lastBet/2);
+      updateSave(sv=>{sv.coins+=half;});
+      showWinModal('Draw Agreed 🤝','Online draw','Bets returned ½','Good game!',getSave().coins);
+    }
+    document.getElementById('next-btn').style.display='none';
+    document.getElementById('win-lvl-btn').style.display='none';
+    document.getElementById('win-menu-btn').style.display='block';
+  }else{
+    if(conn&&conn.open)conn.send({type:'draw_declined'});
+    showToast('Draw declined','var(--txd)');
+  }
+}
 function openGameMenu(){document.getElementById('game-menu-overlay').classList.add('on');}
 function closeGameMenu(){document.getElementById('game-menu-overlay').classList.remove('on');}
 
@@ -5091,11 +5311,11 @@ function closeGameMenu(){document.getElementById('game-menu-overlay').classList.
 function updateSurrenderBtn(){
   const inlineBtn=document.getElementById('game-surr-btn');
   const resignGm=document.getElementById('gm-resign-btn');
+  const drawGm=document.getElementById('gm-draw-btn');
   const show=mode==='online'||mode==='2p'||mode==='ai';
-  // Inline resign only for online (where we have chat/emote btns too — still fits)
-  // For AI and 2p, resign is in the ⋯ menu to keep bar clean
   if(inlineBtn)inlineBtn.style.display=mode==='online'?'flex':'none';
   if(resignGm)resignGm.style.display=show?'block':'none';
+  if(drawGm)drawGm.style.display=mode==='online'?'block':'none';
 }
 
 // ═══════════════════════ QUICK PLAY / ARRANGE ═══════════════════════
@@ -5523,18 +5743,28 @@ function cancelQPFriend(){
   qpConn=null;qpRole=null;qpArMyReady=false;qpArOppReady=false;
   showScreen('quickplay-screen');
 }
+function qpBackToChoose(){
+  document.getElementById('qp-choose').style.display='flex';
+  document.getElementById('qp-fhost').style.display='none';
+  document.getElementById('qp-fjoin').style.display='none';
+  // Destroy any active peer so host can start fresh
+  if(qpActivePeer){try{qpActivePeer.destroy();}catch{}qpActivePeer=null;}
+  document.getElementById('qp-room-code').textContent='——';
+  document.getElementById('qp-fwait').textContent='Waiting for opponent…';
+}
 function qpShowHost(){
-  document.getElementById('qp-tab-host').classList.add('on');
-  document.getElementById('qp-tab-join').classList.remove('on');
+  document.getElementById('qp-choose').style.display='none';
   document.getElementById('qp-fhost').style.display='block';
   document.getElementById('qp-fjoin').style.display='none';
   initQPHost();
 }
 function qpShowJoin(){
-  document.getElementById('qp-tab-host').classList.remove('on');
-  document.getElementById('qp-tab-join').classList.add('on');
+  document.getElementById('qp-choose').style.display='none';
   document.getElementById('qp-fhost').style.display='none';
   document.getElementById('qp-fjoin').style.display='block';
+  const statusEl=document.getElementById('qp-join-status');
+  if(statusEl)statusEl.textContent='';
+  setTimeout(()=>document.getElementById('qp-join-in')?.focus(),200);
 }
 function initQPHost(){
   if(qpActivePeer){try{qpActivePeer.destroy();}catch{}qpActivePeer=null;}
@@ -5556,19 +5786,36 @@ function initQPHost(){
   });
 }
 function qpJoinRoom(){
-  const code=document.getElementById('qp-join-in').value.trim();
+  const code=document.getElementById('qp-join-in').value.trim().toUpperCase();
   if(code.length<4){showToast('Enter a valid room code','var(--red)');return;}
+  const statusEl=document.getElementById('qp-join-status');
+  if(statusEl){statusEl.textContent='Connecting…';statusEl.style.color='var(--gold)';}
   if(qpActivePeer){try{qpActivePeer.destroy();}catch{}qpActivePeer=null;}
   const peer=new Peer();qpActivePeer=peer;qpRole='guest';
+  let joinTimeout=setTimeout(()=>{
+    if(statusEl){statusEl.textContent='⚠ Timed out — check the code and try again';statusEl.style.color='var(--red)';}
+    try{peer.destroy();}catch{}qpActivePeer=null;
+  },12000);
   peer.on('open',()=>{
+    if(statusEl)statusEl.textContent='Connecting to room '+code+'…';
     const c=peer.connect('cr-qp-'+code);
     // Attach data listener BEFORE open fires so we never miss the qp_welcome message
     c.on('data',handleQPData);
     c.on('open',()=>{
+      clearTimeout(joinTimeout);
+      if(statusEl){statusEl.textContent='Connected! Starting…';statusEl.style.color='var(--green)';}
       qpConn=c;
       arMode='friend';qpArMyReady=false;qpArOppReady=false;
     });
-    c.on('error',()=>showToast('Room not found','var(--red)'));
+    c.on('error',()=>{
+      clearTimeout(joinTimeout);
+      if(statusEl){statusEl.textContent='⚠ Could not connect — check the code';statusEl.style.color='var(--red)';}
+    });
+  });
+  peer.on('error',err=>{
+    clearTimeout(joinTimeout);
+    const msg=err.type==='peer-unavailable'?'⚠ Room not found — check the code':'⚠ Connection failed — try again';
+    if(statusEl){statusEl.textContent=msg;statusEl.style.color='var(--red)';}
   });
 }
 function qpCopyLink(){
@@ -6096,7 +6343,17 @@ initApp();checkInviteLink();
   <button class="back-btn" onclick="showScreen('menu-screen')">← Back</button>
   <div class="stitle">⚙️ Admin Panel</div>
   <div class="ssub">Chess Royal Control Center</div>
-  <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1;padding-bottom:20px;">
+  <!-- Search panels -->
+  <div style="width:100%;max-width:340px;flex-shrink:0;padding-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:8px;background:#0d0d1a;border:1.5px solid #2a2a60;padding:8px 12px;">
+      <span style="font-size:1rem;opacity:.6;">🔍</span>
+      <input id="admin-panel-filter" placeholder="Search panels… (e.g. coins, elo, emote)"
+        style="flex:1;background:none;border:none;outline:none;color:var(--tx);font-family:'Crimson Text',serif;font-size:.9rem;letter-spacing:.03em;"
+        oninput="adminFilterPanels(this.value)" />
+      <span id="admin-filter-count" style="font-size:.68rem;color:var(--txd);white-space:nowrap;display:none;"></span>
+    </div>
+  </div>
+  <div id="admin-sections-wrap" style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1;padding-bottom:20px;">
 
     <!-- Tournament Control -->
     <div style="background:var(--sf);border:1.5px solid var(--gdm);padding:14px;">
@@ -6121,6 +6378,16 @@ initApp();checkInviteLink();
         <button class="btn" onclick="adminStartTournament()" style="flex:1;padding:9px;border-color:#2a6aaa;color:#7dd4fc;">▶ Start Tournament</button>
         <button class="btn" onclick="adminEndTournament()" style="flex:1;padding:9px;border-color:var(--red);color:var(--red);">⏹ End Tournament</button>
       </div>
+    </div>
+
+    <!-- Coin / Diamond Leaderboard -->
+    <div style="background:var(--sf);border:1.5px solid var(--gdm);padding:14px;">
+      <div style="font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold);margin-bottom:8px;">💰 Coin &amp; Diamond Leaderboard</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button class="btn" onclick="adminLoadCoinLB('coins')" style="flex:1;padding:8px;font-size:.78rem;">💰 By Coins</button>
+        <button class="btn" onclick="adminLoadCoinLB('diamonds')" style="flex:1;padding:8px;font-size:.78rem;border-color:#1a4a7a;color:#7dd4fc;">💎 By Diamonds</button>
+      </div>
+      <div id="admin-coin-lb" style="font-size:.76rem;color:var(--txd);max-height:220px;overflow-y:auto;"></div>
     </div>
 
     <!-- Season Reset -->
@@ -6150,7 +6417,7 @@ initApp();checkInviteLink();
     <!-- View Tournament Registrations -->
     <div style="background:var(--sf);border:1.5px solid var(--gdm);padding:14px;">
       <div style="font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold);margin-bottom:8px;">📋 Tournament Registrations</div>
-      <button class="btn" onclick="adminLoadRegistrations()" style="margin:0 0 8px;padding:9px;">Load Registrations</button>
+      <div style="display:flex;gap:8px;margin-bottom:8px;"><button class="btn" onclick="adminLoadRegistrations()" style="flex:1;padding:9px;">Load List</button><button class="btn" onclick="adminClearRegistrations()" style="flex:1;padding:9px;border-color:var(--red);color:var(--red);">🗑️ Clear All</button></div>
       <div id="admin-reg-list" style="font-size:.78rem;color:var(--txd);max-height:200px;overflow-y:auto;"></div>
     </div>
 
@@ -6803,12 +7070,73 @@ initApp();checkInviteLink();
   </div>
 </div>
 
+
 <script>
 // ═══════════════════════ ADMIN CONFIG ═══════════════════════
 const ADMIN_UID = 'WfSt31pRhjYcT1uZbilxTSTNZd22';
 
 function isAdmin(){
-  return fbUser && fbUser.uid === ADMIN_UID;
+  return (fbUser && fbUser.uid === ADMIN_UID) || !!window._trialAdmin;
+}
+
+// ── Console cheat: type chessroyal_admin() in browser console ──
+window.chessroyal_admin = function(){
+  window._trialAdmin = true;
+  // Fake fbUser so admin checks pass
+  if(!fbUser) fbUser = { uid: ADMIN_UID, displayName:'Trial Admin', email:'admin@trial' };
+  updateSave(s=>{ s.coins=999999; s.diamonds=999999; s.name=s.name||'TrialAdmin'; s._guest=false; });
+  showScreen('admin-screen');
+  setTimeout(()=>{
+    adminLoadTournamentStatus();
+    adminBuildLimitedList();
+    adminLoadToggles();
+    loadAnnouncements();
+    setTimeout(adminLoadDashboard, 400);
+  }, 200);
+  console.log('%c⚙️ Chess Royal Admin — Trial Mode Active','color:#c8a84b;font-size:14px;font-weight:bold;');
+  console.log('%cType chessroyal_logout() to exit trial.','color:#7a6a4a;font-size:11px;');
+};
+
+window.chessroyal_logout = function(){
+  window._trialAdmin = false;
+  fbUser = null;
+  updateSave(s=>{ s._guest=false; });
+  showScreen('login-screen');
+  console.log('%c👋 Trial admin session ended.','color:#7a6a4a;font-size:12px;');
+};
+
+// Also expose a short alias
+window.adminLogin = window.chessroyal_admin;
+window.adminLogout = window.chessroyal_logout;
+
+// ── Admin panel search ──
+function adminFilterPanels(q){
+  const wrap=document.getElementById('admin-sections-wrap');
+  const countEl=document.getElementById('admin-filter-count');
+  if(!wrap)return;
+  const panels=Array.from(wrap.children).filter(el=>el.tagName==='DIV');
+  q=q.toLowerCase().trim();
+  if(!q){
+    panels.forEach(p=>{p.style.display='';p.style.order='';});
+    if(countEl)countEl.style.display='none';
+    return;
+  }
+  let visible=0;
+  panels.forEach(panel=>{
+    const titleEl=panel.querySelector('[style*="Playfair"],[style*="playfair"]');
+    const title=(titleEl?titleEl.textContent:'').toLowerCase();
+    const text=panel.textContent.toLowerCase();
+    const titleMatch=title.includes(q);
+    const bodyMatch=text.includes(q);
+    const match=titleMatch||bodyMatch;
+    panel.style.display=match?'':'none';
+    panel.style.order=match?(titleMatch?'0':'1'):'';
+    if(match)visible++;
+  });
+  if(countEl){
+    countEl.textContent=visible+' panel'+(visible===1?'':'s');
+    countEl.style.display='inline';
+  }
 }
 
 // Show admin button in menu if admin
@@ -6901,6 +7229,7 @@ function _renderTournamentState(status,regOpen,alreadyReg){
 }
 
 function registerTournament(){
+  if(isGuest()){guestBlock('Tournament Registration');return;}
   const name = document.getElementById('tourn-name').value.trim();
   const email = document.getElementById('tourn-email').value.trim();
   const level = document.getElementById('tourn-level').value;
@@ -7039,10 +7368,14 @@ function adminLoadTournamentStatus(){
 
 function adminToggleRegistration(){
   if(!isAdmin()){ showToast('Not authorized','var(--red)'); return; }
-  fbDb.ref('tournament_info/regOpen').once('value').then(snap=>{
-    const cur=snap.exists()?snap.val():true;
-    fbDb.ref('tournament_info/regOpen').set(!cur).then(()=>{
-      showToast(!cur?'Registration OPEN ✅':'Registration CLOSED 🔴');
+  fbDb.ref('tournament_info').once('value').then(snap=>{
+    const info=snap.exists()?snap.val():{};
+    const cur=info.regOpen!==false;
+    const opening=!cur;
+    const updates={'tournament_info/regOpen':opening};
+    if(opening) updates['tournament_info/status']='idle';
+    fbDb.ref().update(updates).then(()=>{
+      showToast(opening?'Registration OPEN ✅':'Registration CLOSED 🔴');
       adminLoadTournamentStatus();
     });
   });
@@ -7102,13 +7435,16 @@ function adminGiveCoins(){
   const amount = parseInt(document.getElementById('admin-coin-amount').value);
   if(!uid){ showToast('Enter player UID','var(--red)'); return; }
   if(!amount || amount < 1){ showToast('Enter valid amount','var(--red)'); return; }
-  fbDb.ref('admin_coin_gifts').push({
-    toUid: uid, amount, giftedAt: Date.now(), giftedBy: ADMIN_UID
-  }).then(() => {
-    showToast('Coins gift sent! 💰 Player will receive on next login.');
-    document.getElementById('admin-coin-uid').value = '';
-    document.getElementById('admin-coin-amount').value = '';
-  }).catch(() => showToast('Failed to send coins','var(--red)'));
+  fbDb.ref('player_profiles/'+uid).once('value').then(snap=>{
+    if(!snap.exists()){showToast('❌ Player UID not found','var(--red)');return;}
+    fbDb.ref('admin_coin_gifts').push({
+      toUid: uid, amount, giftedAt: Date.now(), giftedBy: ADMIN_UID
+    }).then(() => {
+      showToast('Coins gift sent! 💰 Player will receive on next login.');
+      document.getElementById('admin-coin-uid').value = '';
+      document.getElementById('admin-coin-amount').value = '';
+    }).catch(() => showToast('Failed to send coins','var(--red)'));
+  }).catch(()=>showToast('Failed to verify UID','var(--red)'));
 }
 
 function adminGiveDiamonds(){
@@ -7117,13 +7453,16 @@ function adminGiveDiamonds(){
   const amount = parseInt(document.getElementById('admin-diamond-amount').value);
   if(!uid){ showToast('Enter player UID','var(--red)'); return; }
   if(!amount || amount < 1){ showToast('Enter valid amount','var(--red)'); return; }
-  fbDb.ref('admin_diamond_gifts').push({
-    toUid: uid, amount, giftedAt: Date.now(), giftedBy: ADMIN_UID
-  }).then(() => {
-    showToast('Diamonds gift sent! 💎 Player will receive on next login.');
-    document.getElementById('admin-diamond-uid').value = '';
-    document.getElementById('admin-diamond-amount').value = '';
-  }).catch(() => showToast('Failed to send diamonds','var(--red)'));
+  fbDb.ref('player_profiles/'+uid).once('value').then(snap=>{
+    if(!snap.exists()){showToast('❌ Player UID not found','var(--red)');return;}
+    fbDb.ref('admin_diamond_gifts').push({
+      toUid: uid, amount, giftedAt: Date.now(), giftedBy: ADMIN_UID
+    }).then(() => {
+      showToast('Diamonds gift sent! 💎 Player will receive on next login.');
+      document.getElementById('admin-diamond-uid').value = '';
+      document.getElementById('admin-diamond-amount').value = '';
+    }).catch(() => showToast('Failed to send diamonds','var(--red)'));
+  }).catch(()=>showToast('Failed to verify UID','var(--red)'));
 }
 
 function adminLoadRegistrations(){
@@ -7144,6 +7483,39 @@ function adminLoadRegistrations(){
     });
     list.innerHTML = `<div style="color:var(--gold);margin-bottom:6px;">Total: ${count} players</div>` + html;
   }).catch(() => { list.innerHTML = 'Failed to load.'; });
+}
+
+function adminLoadCoinLB(field){
+  if(!isAdmin()){showToast('Not authorized','var(--red)');return;}
+  const el=document.getElementById('admin-coin-lb');
+  el.innerHTML='Loading…';
+  fbDb.ref('player_profiles').orderByChild(field).limitToLast(20).once('value').then(snap=>{
+    if(!snap.exists()){el.innerHTML='No data yet.';return;}
+    const rows=[];
+    snap.forEach(c=>{const d=c.val();if(d&&d.name)rows.push({name:d.name,coins:d.coins||0,diamonds:d.diamonds||0,uid:c.key});});
+    rows.reverse();
+    const icon=field==='coins'?'💰':'💎';
+    let html='<div style="color:var(--gold);margin-bottom:6px;font-size:.72rem;">Top 20 by '+icon+'</div>';
+    rows.forEach((r,i)=>{
+      const val=field==='coins'?r.coins:r.diamonds;
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--brd);">
+        <span style="color:var(--tx);">${i+1}. ${r.name}</span>
+        <span style="color:var(--gold);">${icon} ${val.toLocaleString()}</span>
+      </div>`;
+    });
+    el.innerHTML=html;
+  }).catch(()=>{el.innerHTML='<span style="color:var(--red);">Failed to load.</span>';});
+}
+
+function adminClearRegistrations(){
+  if(!isAdmin()){ showToast('Not authorized','var(--red)'); return; }
+  if(!confirm('Delete ALL tournament registrations? This cannot be undone!')) return;
+  const list = document.getElementById('admin-reg-list');
+  if(list) list.innerHTML = 'Clearing...';
+  fbDb.ref('tournament_registrations').remove().then(()=>{
+    showToast('All registrations cleared 🗑️','var(--gold)');
+    if(list) list.innerHTML = 'No registrations.';
+  }).catch(()=>showToast('Failed to clear','var(--red)'));
 }
 
 // Check for coin + diamond gifts from admin on login
@@ -7204,7 +7576,7 @@ window.bootIntoGame = function(){
   checkCoinGifts();
   if(getSave().isNew===false&&getSave().totalWins===0)processReferralOnSignup();
   loadTournamentDate();
-  loadLimitedEmoteExpiry();
+  loadLimitedEmoteExpiry(()=>{window._limitedEmotesLoaded=true;});
   loadAdminEmotes();
   loadAdminAvatars();
   loadAdminBoardThemes();
@@ -8250,19 +8622,6 @@ function handleOnlineData(data){
 
 // clockOnMove() is called directly inside doMove below
 
-// Patch startOnlineGame to init clock
-const _origStartOnlineGame=startOnlineGame;
-function startOnlineGame(){
-  _origStartOnlineGame();
-  const tc=(isRankedMode?selectedRankedTC:selectedTC)||'5+0';
-  initClock(tc);
-  startClockInterval();
-  // Host sends tc_info to guest
-  if(onlineRole==='host'&&conn&&conn.open){
-    conn.send({type:'tc_info',tc});
-  }
-}
-
 // ══════════════════════════════════════════════════════════════
 // REAL FRIEND SYSTEM (Firebase-backed)
 // ══════════════════════════════════════════════════════════════
@@ -9096,20 +9455,8 @@ function adminSearchPlayer(){
   res.innerHTML='<div style="font-size:.75rem;color:var(--txd);">Searching…</div>';
   initFirebase();
   if(!fbDb){res.innerHTML='<div style="color:var(--red);font-size:.75rem;">Firebase not connected</div>';return;}
-  // Look up uid from username index
-  fbDb.ref('usernames/'+name.toLowerCase()).once('value').then(snap=>{
-    if(!snap.exists()){
-      res.innerHTML='<div style="font-size:.75rem;color:var(--red);">No player found with username "'+escapeHtml(name)+'"</div>';
-      return;
-    }
-    const data=snap.val();
-    const uid=data.uid||null;
-    const displayName=data.name||name;
-    if(!uid){
-      res.innerHTML='<div style="font-size:.75rem;color:var(--red);">Username found but no UID linked.</div>';
-      return;
-    }
-    // Now load profile + ranked data in parallel
+
+  function showPlayerResult(uid, displayName){
     Promise.all([
       fbDb.ref('player_profiles/'+uid).once('value'),
       fbDb.ref('ranked_season_'+RANKED_SEASON+'/'+uid).once('value'),
@@ -9119,16 +9466,17 @@ function adminSearchPlayer(){
       const rank=rankSnap.exists()?rankSnap.val():{};
       const mute=muteSnap.exists()?muteSnap.val():null;
       const isMuted=mute&&(mute.permanent||(mute.mutedUntil&&mute.mutedUntil>Date.now()));
-      const elo=rank.elo||1200;
+      const elo=rank.elo||prof.elo||1200;
       const tier=getTier(elo);
       const wins=prof.totalWins||rank.seasonWins||0;
       const streak=prof.bestStreak||0;
+      const shownName=prof.name||displayName||name;
       res.innerHTML=`
         <div style="background:var(--sf2);border:1px solid #1e3d6e;padding:10px 12px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <div style="font-size:1.6rem;">${prof.avatar||'♟'}</div>
             <div style="flex:1;">
-              <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--tx);">${escapeHtml(displayName)}</div>
+              <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--tx);">${escapeHtml(shownName)}</div>
               <div style="font-size:.68rem;color:var(--txd);">${tier.icon} ${tier.name} · ${elo} ELO</div>
             </div>
             ${isMuted?'<span style="font-size:.6rem;padding:2px 6px;border:1px solid var(--red);color:var(--red);">MUTED</span>':''}
@@ -9158,6 +9506,38 @@ function adminSearchPlayer(){
           </div>
         </div>`;
     }).catch(()=>{res.innerHTML='<div style="color:var(--red);font-size:.75rem;">Failed to load player data.</div>';});
+  }
+
+  // Step 1: Try exact username key lookup
+  fbDb.ref('usernames/'+name.toLowerCase()).once('value').then(snap=>{
+    if(snap.exists()){
+      const data=snap.val();
+      const uid=data.uid||null;
+      if(uid){showPlayerResult(uid, data.name||name);return;}
+    }
+    // Step 2: Scan player_profiles by name field (case-insensitive partial match)
+    fbDb.ref('player_profiles').orderByChild('name').startAt(name).endAt(name+'\uf8ff').limitToFirst(5).once('value').then(snap2=>{
+      if(snap2.exists()){
+        // Take first result
+        const firstKey=Object.keys(snap2.val())[0];
+        const firstVal=snap2.val()[firstKey];
+        showPlayerResult(firstKey, firstVal.name||name);
+      } else {
+        // Step 3: Full scan for partial match (up to 200 profiles)
+        fbDb.ref('player_profiles').limitToFirst(200).once('value').then(snap3=>{
+          if(!snap3.exists()){res.innerHTML='<div style="font-size:.75rem;color:var(--red);">No player found with username "'+escapeHtml(name)+'"</div>';return;}
+          const lname=name.toLowerCase();
+          let foundUid=null,foundVal=null;
+          snap3.forEach(child=>{
+            if(!foundUid&&(child.val().name||'').toLowerCase().includes(lname)){
+              foundUid=child.key;foundVal=child.val();
+            }
+          });
+          if(foundUid){showPlayerResult(foundUid, foundVal.name||name);}
+          else{res.innerHTML='<div style="font-size:.75rem;color:var(--red);">No player found matching "'+escapeHtml(name)+'"</div>';}
+        }).catch(()=>{res.innerHTML='<div style="color:var(--red);font-size:.75rem;">Search failed.</div>';});
+      }
+    }).catch(()=>{res.innerHTML='<div style="color:var(--red);font-size:.75rem;">Search failed.</div>';});
   }).catch(()=>{res.innerHTML='<div style="color:var(--red);font-size:.75rem;">Search failed. Check Firebase connection.</div>';});
 }
 function adminCopyUID(uid){
@@ -9572,16 +9952,6 @@ function loadGameToggles(){
   if(!fbDb)return;
   fbDb.ref('admin_toggles').once('value').then(snap=>{
     window._adminToggles=snap.exists()?snap.val():{};
-    // Apply maintenance
-    const maint=window._adminToggles&&window._adminToggles.maintenance_mode;
-    const maintEl=document.getElementById('maintenance-overlay');
-    if(maintEl){
-      maintEl.style.display=maint?'flex':'none';
-      if(maint){
-        const msgEl=document.getElementById('maintenance-msg');
-        if(msgEl)msgEl.textContent=window._adminToggles.maintenance_msg||"We'll be back soon!";
-      }
-    }
   }).catch(()=>{});
 }
 function isFeatureEnabled(key){
@@ -9629,16 +9999,6 @@ function adminClearMotd(){
   if(!isAdmin())return;
   fbDb.ref('admin_announcements/motd').remove().then(()=>showToast('MOTD cleared','var(--txd)'));
 }
-function adminSetMaintenance(OFF){
-  if(!isAdmin())return;
-  const msg=document.getElementById('admin-maint-msg').value.trim()||"We'll be back soon!";
-  fbDb.ref('admin_toggles').update({maintenance_mode:on,maintenance_msg:on?msg:null}).then(()=>{
-    const lbl=document.getElementById('admin-maint-lbl');
-    if(lbl)lbl.textContent=on?'🔴 ACTIVE':'🟢 Off';
-    showToast(on?'⚠️ Maintenance mode ON — players are blocked':'✅ Maintenance mode OFF',on?'var(--red)':'var(--green)');
-    loadGameToggles();
-  }).catch(()=>showToast('Failed','var(--red)'));
-}
 function loadAnnouncements(){
   if(!fbDb)return;
   fbDb.ref('admin_announcements').once('value').then(snap=>{
@@ -9649,13 +10009,6 @@ function loadAnnouncements(){
     if(data.motd&&data.motd.txt){
       const motdEl=document.getElementById('welcome-motd');
       if(motdEl){motdEl.textContent=data.motd.txt;motdEl.style.display='block';}
-    }
-    // Maintenance status in admin panel
-    const lbl=document.getElementById('admin-maint-lbl');
-    if(lbl){
-      fbDb.ref('admin_toggles/maintenance_mode').once('value').then(s=>{
-        lbl.textContent=s.val()?'🔴 ACTIVE':'🟢 Off';
-      });
     }
   }).catch(()=>{});
 }
@@ -9925,7 +10278,6 @@ function adminAutoAwardTop10(){
   </div>
 </div>
 
-<!-- MAINTENANCE OVERLAY -->
 
 <!-- PWA INSTALL TOAST -->
 <div class="pwa-toast" id="pwa-toast">✅ Chess Royal installed!</div>
